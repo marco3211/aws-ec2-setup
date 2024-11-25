@@ -1,0 +1,62 @@
+# Terraform-specific ignores
+
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Exclude all .tfvars files, which are likely to contain sensitive data
+*.tfvars
+*.tfvars.json
+
+# Ignore override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Ignore CLI configuration files
+.terraformrc
+terraform.rc
+
+# Ansible-specific ignores
+
+# Ignore temporary files created by Ansible
+*.retry
+
+# Ignore Ansible cache directories
+.cache/
+.cache/*
+
+# Ignore Ansible vault files (if any)
+*.vault
+
+# General ignores
+key-pair
+ansible/inventories/hosts.ini
+ansible/.vault_pass.txt
+*.csv
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
+
+# Editor-specific files
+.vscode/
+.idea/
+*.swp
+*~
+
+# Node modules (if using Node.js for scripting)
+node_modules/
+
+# OS-specific files
+.DS_Store
+Thumbs.db

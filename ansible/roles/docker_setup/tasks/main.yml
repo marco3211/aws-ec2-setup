@@ -1,0 +1,69 @@
+---
+- name: Update all packages
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+  become: yes
+  become_user: root
+
+- name: Install Docker
+  yum:
+    name: docker
+    state: present
+  become: yes
+  become_user: root
+
+- name: Start Docker service
+  service:
+    name: docker
+    state: started
+  become: yes
+  become_user: root
+  
+- name: Add ec2-user to docker group
+  user:
+    name: ec2-user
+    groups: docker
+    append: yes
+  become: yes
+  become_user: root
+
+- name: Verify Docker installation
+  command: docker ps
+  register: docker_ps
+  ignore_errors: yes
+  become: yes
+  become_user: root
+
+- name: Show Docker ps output
+  debug:
+    msg: "{{ docker_ps.stdout }}"
+  when: docker_ps.rc == 0
+
+- name: Install Docker Compose
+  get_url:
+    url: "https://github.com/docker/compose/releases/latest/download/docker-compose-Linux-{{ ansible_architecture }}"
+    dest: /usr/local/bin/docker-compose
+    mode: '0755'
+  become: yes
+  become_user: root
+
+- name: Verify Docker Compose installation
+  command: docker-compose --version
+  register: docker_compose_version
+  ignore_errors: yes
+
+- name: Show Docker Compose version
+  debug:
+    msg: "{{ docker_compose_version.stdout }}"
+  when: docker_compose_version.rc == 0
+
+- name: Authenticate to Docker registry
+  command: >
+    docker login {{ docker_registry_url }}
+    --username {{ docker_username }}
+    --password {{ docker_password }}
+  become: yes
+  become_user: root
+  no_log: true

@@ -1,0 +1,14 @@
+---
+- name: Configure EC2 instances
+  hosts: web
+  become: yes
+  become_user: ec2-user
+  vars_files:
+    - roles/git_ssh_setup/vars/vault.yml
+    - roles/git_clone/vars/main.yml
+    - roles/docker_setup/vars/vault.yml
+  roles:
+    - git_ssh_setup
+    - nvm_node_setup
+    - git_clone
+    - docker_setup

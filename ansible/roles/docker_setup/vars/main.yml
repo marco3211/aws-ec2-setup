@@ -1,0 +1,3 @@
+---
+# vars file for docker_setup
+include_vars: vault.yml

@@ -1,0 +1,28 @@
+---
+- name: Install NVM
+  shell: |
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash
+  args:
+    executable: /bin/bash
+    chdir: "/home/ec2-user"
+    creates: "/home/ec2-user/.nvm/nvm.sh"
+  become: yes
+  become_user: ec2-user
+
+- name: Ensure NVM is sourced in .profile
+  lineinfile:
+    path: "/home/ec2-user/.profile"
+    line: 'export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"'
+    create: yes
+  become: yes
+  become_user: ec2-user
+
+- name: Install Node.js
+  shell: |
+    . /home/ec2-user/.nvm/nvm.sh && nvm install node
+  args:
+    executable: /bin/bash
+    chdir: "/home/ec2-user"
+    creates: "/home/ec2-user/.nvm/versions/node"
+  become: yes
+  become_user: ec2-user

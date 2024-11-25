@@ -1,0 +1,39 @@
+---
+- name: Ensure project directory exists
+  file:
+    path: /home/ec2-user/project
+    state: directory
+    mode: '0755'
+    owner: ec2-user
+    group: ec2-user
+  become: yes
+
+- name: Add GitHub to known_hosts
+  known_hosts:
+    name: github.com
+    key: "{{ lookup('pipe', 'ssh-keyscan -t rsa github.com') }}"
+    path: /home/ec2-user/.ssh/known_hosts
+  become: yes
+  become_user: ec2-user
+
+- name: Clone the Git repository using expect
+  shell: |
+    expect -c '
+    spawn git clone {{ git_repo_url }} /home/ec2-user/project
+    expect "Enter passphrase for key"
+    send "{{ ssh_key_passphrase }}\r"
+    expect eof
+    '
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: ec2-user
+
+- name: Display Git clone result
+  shell: ls -la /home/ec2-user/project
+  register: git_clone_result
+  become: yes
+
+- name: Display Git clone directory contents
+  debug:
+    var: git_clone_result.stdout_lines
